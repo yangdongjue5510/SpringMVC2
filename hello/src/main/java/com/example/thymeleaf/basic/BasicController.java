@@ -39,16 +39,23 @@ public class BasicController {
         Map<String, User> map = new HashMap<>();
         map.put("userA", userA);
         map.put("userB", userB);
+
+        model.addAttribute("user", userA);
+        model.addAttribute("users", list);
+        model.addAttribute("userMap", map);
+
+        return "basic/variable";
     }
 
     @Data
     static class User{
-        private String userName;
+        private String username;
         private int age;
 
         public User(String userName, int age) { 
-            this.userName = userName;
+            this.username = userName;
             this.age = age;
         }
     }
+
 }
