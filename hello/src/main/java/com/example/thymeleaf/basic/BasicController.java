@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpSession;
@@ -32,14 +33,14 @@ public class BasicController {
 
     @GetMapping("variable")
     public String variable(Model model){
-        User userA = new User("userA", 12);
-        User userB = new User("userB", 13);
+        Users userA = new Users("userA", 12);
+        Users userB = new Users("userB", 13);
 
-        List<User> list = new ArrayList<>();
+        List<Users> list = new ArrayList<>();
         list.add(userA);
         list.add(userB);
 
-        Map<String, User> map = new HashMap<>();
+        Map<String, Users> map = new HashMap<>();
         map.put("userA", userA);
         map.put("userB", userB);
 
@@ -74,6 +75,47 @@ public class BasicController {
         model.addAttribute("data", "Spring!");
         return "basic/literal";
     }
+
+    @GetMapping("/attribute")
+    public String attribute() {
+        return "basic/attribute";
+    }
+
+    @GetMapping("/each")
+    public String each(Model model) {
+        addUsers(model);
+        return "basic/each";
+    }
+
+    @GetMapping("/condition")
+    public String condition(Model model) {
+        addUsers(model);
+        return "basic/condition";
+    }
+
+    @GetMapping("/block")
+    public String block(Model model) {
+        addUsers(model);
+        return "basic/block";
+    }
+
+    @GetMapping("/javascript")
+    public String javascript(Model model) {
+        model.addAttribute("user", new Users("userA", 10));
+        addUsers(model);
+        return "basic/javascript";
+    }
+
+    private void addUsers(Model model) {
+        List<Users> list = new ArrayList<>();
+        list.add(new Users("UserA", 10));
+        list.add(new Users("UserB", 20));
+        list.add(new Users("UserC", 30));
+
+        model.addAttribute("users", list);
+    }
+
+
     @Component("helloBean")
     static class HelloBean{
         public String hello(String data){
@@ -83,11 +125,11 @@ public class BasicController {
 
 
     @Data
-    static class User{
+    static class Users{
         private String username;
         private int age;
 
-        public User(String userName, int age) {
+        public Users(String userName, int age) {
             this.username = userName;
             this.age = age;
         }
