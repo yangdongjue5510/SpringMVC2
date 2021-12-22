@@ -25,4 +25,8 @@ public class Item {
         this.price = price;
         this.quantity = quantity;
     }
+
+    public boolean getOpen() {
+       return open;
+    }
 }
