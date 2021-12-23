@@ -53,22 +53,22 @@ public class ValidationItemControllerV2 {
         //검증 로직
         if (!StringUtils.hasText(item.getItemName())) {
             //bindingResult.addError(new FieldError("item", "itemName", "상품명이 없습니다."));
-            bindingResult.addError(new FieldError("item", "itemName", item.getItemName(), false, null, null, "상품명없다."));
+            bindingResult.addError(new FieldError("item", "itemName", item.getItemName(), false, new String[]{"required.item.itemName"}, null, null));
         }
         if (item.getPrice() == null || item.getPrice() > 10000000 || item.getPrice() < 1000) {
             //bindingResult.addError(new FieldError("item", "price", "가격은 천원에서 백만원 사이를 허용합니다."));
-            bindingResult.addError(new FieldError("item", "price", item.getPrice(), false, null, null, "가격문제."));
+            bindingResult.addError(new FieldError("item", "price", item.getPrice(), false, new String[]{"range.item.price"}, new Object[]{1000, 100000}, null));
         }
         if (item.getQuantity() == null || item.getQuantity() >= 9999) {
             //bindingResult.addError(new FieldError("item", "quantity", "수량은 최대 9999개까지 허용합니다."));
-            bindingResult.addError(new FieldError("item", "quantity", item.getQuantity(), false, null, null, "수량문제."));
+            bindingResult.addError(new FieldError("item", "quantity", item.getQuantity(), false, new String[]{"max.item.quantity"}, new Object[]{9999}, null));
         }
 
         //특정 필드가 아닌 복합 검증
         if (item.getPrice() != null && item.getQuantity() != null) {
             int result = item.getPrice() * item.getQuantity();
             if (result < 10000) {
-                bindingResult.addError(new ObjectError("item", null, null, "수량과 가격의 곱이 10000보다 커야 합니다."));
+                bindingResult.addError(new ObjectError("item", new String[]{"totalPriceMin"}, new Object[]{10000, result}, null));
             }
         }
 
