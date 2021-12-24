@@ -10,6 +10,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
+import org.springframework.validation.ValidationUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -51,6 +52,7 @@ public class ValidationItemControllerV2 {
     @PostMapping("/add")
     public String addItem(@ModelAttribute Item item, BindingResult bindingResult, RedirectAttributes redirectAttributes, Model model) {
         //검증 로직
+        ValidationUtils.rejectIfEmptyOrWhitespace(bindingResult, "itemName", "required");//바로 아래 검증과 동일. 비거나 공백같이 단순한경우만 사용.
         if (!StringUtils.hasText(item.getItemName())) {
             //bindingResult.addError(new FieldError("item", "itemName", "상품명이 없습니다."));
             //bindingResult.addError(new FieldError("item", "itemName", item.getItemName(), false, new String[]{"required.item.itemName"}, null, null));
