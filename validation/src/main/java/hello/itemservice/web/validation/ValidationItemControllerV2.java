@@ -28,6 +28,7 @@ import lombok.RequiredArgsConstructor;
 public class ValidationItemControllerV2 {
 
     private final ItemRepository itemRepository;
+    private final ItemValidator itemValidator;
 
     @GetMapping
     public String items(Model model) {
@@ -51,38 +52,12 @@ public class ValidationItemControllerV2 {
 
     @PostMapping("/add")
     public String addItem(@ModelAttribute Item item, BindingResult bindingResult, RedirectAttributes redirectAttributes, Model model) {
-        //검증 로직
-        ValidationUtils.rejectIfEmptyOrWhitespace(bindingResult, "itemName", "required");//바로 아래 검증과 동일. 비거나 공백같이 단순한경우만 사용.
-        if (!StringUtils.hasText(item.getItemName())) {
-            //bindingResult.addError(new FieldError("item", "itemName", "상품명이 없습니다."));
-            //bindingResult.addError(new FieldError("item", "itemName", item.getItemName(), false, new String[]{"required.item.itemName"}, null, null));
-            bindingResult.rejectValue("itemName", "required");
-        }
-        if (item.getPrice() == null || item.getPrice() > 10000000 || item.getPrice() < 1000) {
-            //bindingResult.addError(new FieldError("item", "price", "가격은 천원에서 백만원 사이를 허용합니다."));
-            //bindingResult.addError(new FieldError("item", "price", item.getPrice(), false, new String[]{"range.item.price"}, new Object[]{1000, 100000}, null));
-            bindingResult.rejectValue("price", "range", new Object[]{1000, 100000}, null);
-        }
-        if (item.getQuantity() == null || item.getQuantity() >= 9999) {
-            //bindingResult.addError(new FieldError("item", "quantity", "수량은 최대 9999개까지 허용합니다."));
-            //bindingResult.addError(new FieldError("item", "quantity", item.getQuantity(), false, new String[]{"max.item.quantity"}, new Object[]{9999}, null));
-            bindingResult.rejectValue("quantity", "max", new Object[]{9999}, null);
-        }
-
-        //특정 필드가 아닌 복합 검증
-        if (item.getPrice() != null && item.getQuantity() != null) {
-            int result = item.getPrice() * item.getQuantity();
-            if (result < 10000) {
-                //bindingResult.addError(new ObjectError("item", new String[]{"totalPriceMin"}, new Object[]{10000, result}, null));
-                bindingResult.reject("totalPriceMin", new Object[]{10000, result}, null);
-            }
-        }
-
-        //검증에 실패하면 다시 입력 폼으로
         if (bindingResult.hasErrors()) {
             //bindingResult는 자연스럽게 뷰로 전달되서 모델로 넣을 필요 없다.
             return "validation/v2/addForm";
         }
+
+        itemValidator.validate(item, bindingResult);
 
         //성공로직
         Item savedItem = itemRepository.save(item);
