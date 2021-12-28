@@ -20,12 +20,14 @@ public class ItemValidator implements Validator {
 		Item item = (Item)target;
 
 		//검증 로직
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "itemName", "required");//바로 아래 검증과 동일. 비거나 공백같이 단순한경우만 사용.
+		//ValidationUtils.rejectIfEmptyOrWhitespace(errors, "itemName", "required");//바로 아래 검증과 동일. 비거나 공백같이 단순한경우만 사용.
+
 		if (!StringUtils.hasText(item.getItemName())) {
 			//bindingResult.addError(new FieldError("item", "itemName", "상품명이 없습니다."));
 			//bindingResult.addError(new FieldError("item", "itemName", item.getItemName(), false, new String[]{"required.item.itemName"}, null, null));
 			errors.rejectValue("itemName", "required");
 		}
+
 		if (item.getPrice() == null || item.getPrice() > 10000000 || item.getPrice() < 1000) {
 			//bindingResult.addError(new FieldError("item", "price", "가격은 천원에서 백만원 사이를 허용합니다."));
 			//bindingResult.addError(new FieldError("item", "price", item.getPrice(), false, new String[]{"range.item.price"}, new Object[]{1000, 100000}, null));
