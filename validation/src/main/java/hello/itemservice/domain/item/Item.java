@@ -5,10 +5,13 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.Range;
+import org.hibernate.validator.constraints.ScriptAssert;
 
 import lombok.Data;
 
 @Data
+//오브젝트 오류를 검증하는 어노테이션. 비추함. 컨트롤러에서 자바코드로 하는게 맞다.
+//@ScriptAssert(lang = "javascript", script = "_this.price * _this.quantity >= 10000", message = "최소 10000원 넘게 입력해주세요.")
 public class Item {
 
     private Long id;

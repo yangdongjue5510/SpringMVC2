@@ -48,10 +48,20 @@ public class ValidationItemControllerV3 {
 
     @PostMapping("/add") //item을 검증후 bindingResult에 저장
     public String addItem(@Validated @ModelAttribute Item item, BindingResult bindingResult, RedirectAttributes redirectAttributes, Model model) {
+        //특정 필드가 아닌 복합 검증
+        if (item.getPrice() != null && item.getQuantity() != null) {
+            int result = item.getPrice() * item.getQuantity();
+            if (result < 10000) {
+                //bindingResult.addError(new ObjectError("item", new String[]{"totalPriceMin"}, new Object[]{10000, result}, null));
+                bindingResult.reject("totalPriceMin", new Object[]{10000, result}, null);
+            }
+        }
+
         if (bindingResult.hasErrors()) {
             //bindingResult는 자연스럽게 뷰로 전달되서 모델로 넣을 필요 없다.
             return "validation/v3/addForm";
         }
+
 
         //성공로직
         Item savedItem = itemRepository.save(item);
