@@ -25,13 +25,6 @@ import lombok.RequiredArgsConstructor;
 public class ValidationItemControllerV3 {
 
     private final ItemRepository itemRepository;
-    private final ItemValidator itemValidator;
-
-
-    @InitBinder //해당 컨트롤러 호출시 검증.
-    public void init(WebDataBinder dataBinder) {
-        dataBinder.addValidators(itemValidator);
-    }
 
     @GetMapping
     public String items(Model model) {
@@ -67,6 +60,8 @@ public class ValidationItemControllerV3 {
         return "redirect:/validation/v3/items/{itemId}";
     }
 
+
+
     @GetMapping("/{itemId}/edit")
     public String editForm(@PathVariable Long itemId, Model model) {
         Item item = itemRepository.findById(itemId);
@@ -79,6 +74,4 @@ public class ValidationItemControllerV3 {
         itemRepository.update(itemId, item);
         return "redirect:/validation/v3/items/{itemId}";
     }
-
 }
-
