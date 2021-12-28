@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import hello.itemservice.domain.form.ItemSaveForm;
+import hello.itemservice.domain.form.ItemUpdateForm;
 import hello.itemservice.domain.item.Item;
 import hello.itemservice.domain.item.ItemRepository;
 import hello.itemservice.domain.item.SaveCheck;
@@ -47,13 +49,13 @@ public class ValidationItemControllerV4 {
 	}
 
 	@PostMapping("/add") //item을 검증후 bindingResult에 저장
-	public String addItem(@Validated(SaveCheck.class) @ModelAttribute Item item, BindingResult bindingResult,
+	public String addItem(@Validated @ModelAttribute("item") ItemSaveForm form, BindingResult bindingResult,
 		RedirectAttributes redirectAttributes, Model model) {
 		//특정 필드가 아닌 복합 검증
-		if (item.getPrice() != null && item.getQuantity() != null) {
-			int result = item.getPrice() * item.getQuantity();
+		if (form.getPrice() != null && form.getQuantity() != null) {
+			int result = form.getPrice() * form.getQuantity();
 			if (result < 10000) {
-				//bindingResult.addError(new ObjectError("item", new String[]{"totalPriceMin"}, new Object[]{10000, result}, null));
+				//bindingResult.addError(new ObjectError("form", new String[]{"totalPriceMin"}, new Object[]{10000, result}, null));
 				bindingResult.reject("totalPriceMin", new Object[] {10000, result}, null);
 			}
 		}
@@ -64,6 +66,10 @@ public class ValidationItemControllerV4 {
 		}
 
 		//성공로직
+		Item item = new Item();
+		item.setItemName(form.getItemName());
+		item.setPrice(form.getPrice());
+		item.setQuantity(form.getQuantity());
 		Item savedItem = itemRepository.save(item);
 		redirectAttributes.addAttribute("itemId", savedItem.getId());
 		redirectAttributes.addAttribute("status", true);
@@ -78,12 +84,12 @@ public class ValidationItemControllerV4 {
 	}
 
 	@PostMapping("/{itemId}/edit")
-	public String edit(@PathVariable Long itemId, @Validated(UpdateCheck.class) @ModelAttribute Item item, BindingResult bindingResult) {
+	public String edit(@PathVariable Long itemId, @Validated @ModelAttribute("item") ItemUpdateForm form, BindingResult bindingResult) {
 		//특정 필드가 아닌 복합 검증
-		if (item.getPrice() != null && item.getQuantity() != null) {
-			int result = item.getPrice() * item.getQuantity();
+		if (form.getPrice() != null && form.getQuantity() != null) {
+			int result = form.getPrice() * form.getQuantity();
 			if (result < 10000) {
-				//bindingResult.addError(new ObjectError("item", new String[]{"totalPriceMin"}, new Object[]{10000, result}, null));
+				//bindingResult.addError(new ObjectError("form", new String[]{"totalPriceMin"}, new Object[]{10000, result}, null));
 				bindingResult.reject("totalPriceMin", new Object[] {10000, result}, null);
 			}
 		}
@@ -92,6 +98,10 @@ public class ValidationItemControllerV4 {
 			return "validation/v4/editForm";
 		}
 
+		Item item = new Item();
+		item.setItemName(form.getItemName());
+		item.setPrice(form.getPrice());
+		item.setQuantity(form.getQuantity());
 		itemRepository.update(itemId, item);
 		return "redirect:/validation/v4/items/{itemId}";
 	}
