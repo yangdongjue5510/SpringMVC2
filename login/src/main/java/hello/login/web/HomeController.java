@@ -1,6 +1,7 @@
 package hello.login.web;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import hello.login.domain.member.Member;
 import hello.login.domain.member.MemberRepository;
@@ -27,8 +28,8 @@ public class HomeController {
     @GetMapping("/")
     public String homeLogin(HttpServletRequest request, Model model) {
 
-        Member member = (Member) sessionManager.getSession(request);
-
+        HttpSession session = request.getSession(false);
+        Member member = (Member) session.getAttribute(SessionConst.LOGIN_MEMBER);
         if (member == null) {
             return "home";
         }
